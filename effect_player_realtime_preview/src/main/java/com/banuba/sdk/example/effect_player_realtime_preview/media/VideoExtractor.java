@@ -138,9 +138,13 @@ public class VideoExtractor extends BaseExtractor {
 
         boolean outputDone = false;
         boolean inputDone = false;
+        long s = System.currentTimeMillis();
+        int frameCount = 0;
         while (!outputDone) {
 
             if (mStopRequested) {
+                long time = System.currentTimeMillis() - s;
+                Log.i("Timing", "Processing time (s): " + time / 1000. + ". Avg (ms): " + time / frameCount);
                 return;
             }
 
@@ -200,6 +204,7 @@ public class VideoExtractor extends BaseExtractor {
                         ByteBuffer data = decoder.getOutputBuffer(decoderStatus);
                         if (doRender && data != null) {
                             if (mDecoderVideoListener != null) {
+                                frameCount++;
                                 mDecoderVideoListener.onVideoBufferDecoded(mRotation, mWidth, mHeight, mStride, mSliceHeight, mColorFormat, data, bufferInfo);
                             }
                         }
@@ -212,6 +217,8 @@ public class VideoExtractor extends BaseExtractor {
 
                 }
         }
+        long time = System.currentTimeMillis() - s;
+        Log.i("Timing", "Processing time (s): " + time / 1000. + ". Avg (ms): " + time / frameCount);
     }
 
 
